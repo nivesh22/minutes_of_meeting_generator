@@ -1,0 +1,14 @@
+name: speech-to-text-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+      - streamlit
+      - transformers
+      - torch
+      - soundfile
+      - numpy
+      - ruff
