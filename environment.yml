@@ -8,7 +8,9 @@ dependencies:
   - pip:
       - streamlit
       - transformers
-      - torch
+      - torch==2.2.0+cpu
+      - torchaudio==2.2.0+cpu
       - soundfile
       - numpy
       - ruff
+      - pyannote.audio
