@@ -1,3 +1,4 @@
+import os
 import torchaudio
 from transformers import pipeline
 import torch
@@ -5,11 +6,20 @@ import tempfile
 
 class STTModel:
     def __init__(self, model_name="openai/whisper-medium", device=None):
+        # Allow cloud overrides via environment variables
+        env_model_name = os.getenv("ASR_MODEL_NAME")
+        local_dir = os.getenv("ASR_MODEL_LOCAL_DIR")
+
+        if local_dir and os.path.isdir(local_dir):
+            model_path = local_dir
+        else:
+            model_path = env_model_name or model_name
+
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self.pipe = pipeline(
             "automatic-speech-recognition",
-            model=model_name,
+            model=model_path,
             device=0 if device == "cuda" else -1,
         )
 
