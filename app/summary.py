@@ -56,8 +56,9 @@ class ConversationSummarizer:
             from transformers import pipeline  # type: ignore
             import torch  # type: ignore
 
+            # Default to CPU unless explicitly overridden
             if device is None:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
+                device = os.getenv("SUMM_DEVICE", "cpu").lower()
 
             # Use local model assets if available; otherwise allow HF hub resolution
             # (though network may be restricted in this environment).
@@ -67,7 +68,7 @@ class ConversationSummarizer:
                 "summarization",
                 model=model_path,
                 tokenizer=model_path,
-                device=0 if device == "cuda" else -1,
+                device=-1 if device == "cpu" else 0,
             )
         except Exception:
             # If anything fails (no transformers, missing model, etc.)
