@@ -41,11 +41,23 @@ A modular, well-documented, and ruff-compliant Streamlit application for transcr
 - Optional environment variables:
   - `ASR_MODEL_NAME`: Whisper model name (e.g., `openai/whisper-small`).
   - `ASR_MODEL_LOCAL_DIR`: Path to a vendored model directory in your repo.
+  - `ASR_DEVICE`: Set to `cpu` (default) or `cuda`.
+  - `DIAR_DEVICE`: Set to `cpu` (default) to force diarization on CPU.
+  - `SUMM_DEVICE`: Set to `cpu` (default) for summarization.
 
 ### Models in the cloud
 
 - ASR (Whisper): The app reads `ASR_MODEL_LOCAL_DIR` first. If set and exists, it loads the model from that directory. Otherwise it uses `ASR_MODEL_NAME` (defaults to `openai/whisper-medium`).
 - Summarizer (BART CNN): Loads from the local `bart-large-cnn/` directory if present; otherwise falls back to a lightweight extractive summary.
+
+## CPU-Only Usage
+
+- The app defaults to CPU for all components (ASR, diarization, summarization).
+- If you previously had CUDA/GPU available, we now explicitly prefer CPU:
+  - ASR: set `ASR_DEVICE=cpu` (default if unset).
+  - Diarization: set `DIAR_DEVICE=cpu` (default) and ensure `HF_TOKEN` is set.
+  - Summarization: set `SUMM_DEVICE=cpu` (default).
+- For pip installs, `torch` and `torchaudio` wheels are CPU-only by default. No CUDA toolkit is required.
 
 ## Customization
 
