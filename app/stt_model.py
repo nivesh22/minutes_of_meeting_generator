@@ -15,12 +15,16 @@ class STTModel:
         else:
             model_path = env_model_name or model_name
 
+        # Default to CPU unless explicitly overridden
         if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = os.getenv("ASR_DEVICE", "cpu").lower()
+
+        device_index = -1 if device == "cpu" else 0
+
         self.pipe = pipeline(
             "automatic-speech-recognition",
             model=model_path,
-            device=0 if device == "cuda" else -1,
+            device=device_index,
         )
 
     def transcribe(self, audio_bytes) -> list:
