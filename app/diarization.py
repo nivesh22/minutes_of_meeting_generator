@@ -1,18 +1,23 @@
+import os
 import torch
 import torchaudio
 import tempfile
 from pyannote.audio import Pipeline
 
 class DiarizationModel:
-    def __init__(self, access_token, num_speakers=1):
+    def __init__(self, access_token, num_speakers=1, device: str = "cpu"):
         try:
-            # Set device globally
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            torch.set_default_device(device)
+            # Force CPU by default; allow override via argument or env DIAR_DEVICE
+            device = os.getenv("DIAR_DEVICE", device).lower()
 
+            if device == "cpu":
+                # Hide GPUs from PyTorch/pyannote to ensure CPU execution
+                os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
+
+            # No need to set global default device; rely on CPU-only visibility
             self.pipeline = Pipeline.from_pretrained(
                 "pyannote/speaker-diarization-3.1",
-                use_auth_token=access_token
+                use_auth_token=access_token,
             )
             self.num_speakers = num_speakers
         except Exception as e:
